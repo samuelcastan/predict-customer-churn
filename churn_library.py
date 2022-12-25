@@ -1,10 +1,16 @@
 # library doc string
 '''
 
+
+Author: Samuel Castán
+Date: 23 December 2022
 '''
 
 # import libraries
 import os
+import constants
+
+
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 
 
