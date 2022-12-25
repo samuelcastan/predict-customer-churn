@@ -38,25 +38,23 @@ class MyModel():
         input:
         pth: a path to the .csv
         output:
-        df: pandas dataframe
-'''
-
+        self.datafame: pandas dataframe
+        '''
+        
         self.dataframe = pd.read_csv(pth)
 
-    def print_dataframe(self):
-        print(self.dataframe)
 
+    def perform_eda(self):
+        '''
+        perform eda on df and save figures to images folder
+        input:
+                df: pandas dataframe
 
-def perform_eda(df):
-    '''
-    perform eda on df and save figures to images folder
-    input:
-            df: pandas dataframe
-
-    output:
-            None
-    '''
-    pass
+        output:
+                None
+        '''
+        
+        pass
 
 
 def encoder_helper(df, category_lst, response):
@@ -143,8 +141,8 @@ def train_models(X_train, X_test, y_train, y_test):
 
 if __name__ == '__main__':
 
+    # Create MyModel object
     model = MyModel()
-
-    model.import_data(constants.PATH)
-
-    model.print_dataframe()
+    # Import CSV
+    model.import_data(constants.CSV_PATH)
+    #
