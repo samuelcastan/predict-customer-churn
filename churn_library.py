@@ -9,21 +9,42 @@ Date: 23 December 2022
 # import libraries
 import os
 import constants
+import pandas as pd
 
 
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 
 
-def import_data(pth):
+class MyModel():
+    # ToDo mejorar docstring
     '''
-    returns dataframe for the csv found at pth
+    Class that encompasess the whole process of reading, preprocessing, training, predicting and evaluating a classification algorithm.
+    '''
 
-    input:
-            pth: a path to the csv
-    output:
-            df: pandas dataframe
-    '''
-    pass
+    def __init__(self):
+        self.dataframe = None
+        self.X = None
+        self.Y = None
+        self.X_train = None
+        self.X_test = None
+        self.Y_train = None
+        self.Y_test = None
+        self.Y_pred = None
+
+    def import_data(self, pth):
+        '''
+        returns dataframe for the csv found at pth
+
+        input:
+        pth: a path to the .csv
+        output:
+        df: pandas dataframe
+'''
+
+        self.dataframe = pd.read_csv(pth)
+
+    def print_dataframe(self):
+        print(self.dataframe)
 
 
 def perform_eda(df):
@@ -66,6 +87,7 @@ def perform_feature_engineering(df, response):
               y_train: y training data
               y_test: y testing data
     '''
+    pass
 
 
 def classification_report_image(y_train,
@@ -117,3 +139,12 @@ def train_models(X_train, X_test, y_train, y_test):
               None
     '''
     pass
+
+
+if __name__ == '__main__':
+
+    model = MyModel()
+
+    model.import_data(constants.PATH)
+
+    model.print_dataframe()
