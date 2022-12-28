@@ -10,12 +10,15 @@ Date: 23 December 2022
 import os
 import constants
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 
 
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 
 
-class MyModel():
+class Model():
     # ToDo mejorar docstring
     '''
     Class that encompasess the whole process of reading, preprocessing, training, predicting and evaluating a classification algorithm.
@@ -41,21 +44,33 @@ class MyModel():
         self.datafame: pandas dataframe
         '''
         
-        self.dataframe = pd.read_csv(pth)
+        df = pd.read_csv(pth)
+        df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
+        df = df.iloc[:,1:]
+        
+        self.dataframe = df
+
+        del df
 
 
     def perform_eda(self):
         '''
-        perform eda on df and save figures to images folder
+        performs eda on df and save figures to images folder
+        
         input:
-                df: pandas dataframe
+                self.dataframe: pandas dataframe
 
         output:
                 None
         '''
-        
-        pass
 
+        for quant_column in constants.QUANT_COLUMNS:
+            plt.figure(figsize=(20,10)) 
+            sns.histplot(data=self.dataframe, x=quant_column)
+            plt.title(f'Histogram for {quant_column}')
+            plt.savefig(f"./images/eda/{quant_column}.png")
+            plt.close()
+            
 
 def encoder_helper(df, category_lst, response):
     '''
@@ -141,8 +156,9 @@ def train_models(X_train, X_test, y_train, y_test):
 
 if __name__ == '__main__':
 
-    # Create MyModel object
-    model = MyModel()
+    # Create Model object
+    model = Model()
     # Import CSV
     model.import_data(constants.CSV_PATH)
-    #
+    # Perform EDA
+    model.perform_eda()
