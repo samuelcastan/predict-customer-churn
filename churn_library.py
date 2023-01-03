@@ -89,21 +89,20 @@ class Model():
         plt.savefig('./images/eda/heatmap/heatmap.png')
         plt.close()
 
+    def encoder_helper(self, category_lst):
+        '''
+        helper function to turn each categorical column (list provided in constants.py) into a new column with
+        propotion of churn for each category - associated with cell 16 from the notebook
 
-        def encoder_helper(self, category_lst):
-            '''
-            helper function to turn each categorical column (list provided in constants.py) into a new column with
-            propotion of churn for each category - associated with cell 16 from the notebook
+        input:
+                self.dataframe: pandas dataframe
+                category_lst: list of columns that contain categorical features
 
-            input:
-                    self.dataframe: pandas dataframe
-                    category_lst: list of columns that contain categorical features
-
-            output:
-                    self.dataframe: pandas dataframe with new columns updated
-            '''
-            
-            pass
+        output:
+                self.dataframe: pandas dataframe with new columns updated
+        '''
+        
+        pass
 
 
 
@@ -185,4 +184,3 @@ if __name__ == '__main__':
     model.perform_eda(quant_columns=constants.QUANT_COLUMNS, cat_columns=constants.CAT_COLUMNS)
 
     # Perform one-hot enconding on categorical variables
-    #model.encoder_helper(constants.CAT_COLUMNS)
