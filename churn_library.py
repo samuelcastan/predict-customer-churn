@@ -74,7 +74,7 @@ class Model():
             self.dataframe[cat_column].value_counts(
                 'normalize').plot(kind='bar')
             plt.title(f'Distribution of proportions for {cat_column}')
-            plt.savefig(f"./images/eda/{cat_column}.png")
+            plt.savefig(f"./images/eda/barplots/{cat_column}.png")
             plt.close()
 
         plt.figure(figsize=(20, 10))
