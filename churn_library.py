@@ -1,4 +1,3 @@
-# library doc string
 '''
 
 
@@ -89,21 +88,20 @@ class Model():
         plt.savefig('./images/eda/heatmap/heatmap.png')
         plt.close()
 
-    def encoder_helper(self, category_lst):
+    def encoder_helper(self, cat_columns):
         '''
         helper function to turn each categorical column (list provided in constants.py) into a new column with
         propotion of churn for each category - associated with cell 16 from the notebook
 
         input:
                 self.dataframe: pandas dataframe
-                category_lst: list of columns that contain categorical features
+                cat_columns: list of columns that contain categorical features to apply one-hot enconding
 
         output:
                 self.dataframe: pandas dataframe with new columns updated
         '''
-        
-        pass
 
+        df = self.dataframe[cat_columns].copy()
 
 
 def perform_feature_engineering(df, response):
@@ -113,10 +111,10 @@ def perform_feature_engineering(df, response):
               response: string of response name [optional argument that could be used for naming variables or index y column]
 
     output:
-              X_train: X training data
-              X_test: X testing data
-              y_train: y training data
-              y_test: y testing data
+              self.X_train: X training data
+              self.X_test: X testing data
+              self.y_train: y training data
+              self.y_test: y testing data
     '''
     pass
 
@@ -176,11 +174,14 @@ if __name__ == '__main__':
 
     # Create Model object
     model = Model()
-    
+
     # Import CSV
     model.import_data(constants.CSV_PATH)
-    
+
     # Perform EDA
-    model.perform_eda(quant_columns=constants.QUANT_COLUMNS, cat_columns=constants.CAT_COLUMNS)
+    model.perform_eda(
+        quant_columns=constants.QUANT_COLUMNS,
+        cat_columns=constants.CAT_COLUMNS)
 
     # Perform one-hot enconding on categorical variables
+    model.encoder_helper(cat_columns=constants.CAT_COLUMNS)
