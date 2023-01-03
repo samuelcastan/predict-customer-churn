@@ -14,12 +14,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 
 
 class Model():
-    # ToDo mejorar docstring
     '''
     Class that encompasess the whole process of reading, preprocessing, training, predicting and evaluating a classification algorithm.
     '''
@@ -43,20 +41,20 @@ class Model():
         output:
         self.datafame: pandas dataframe
         '''
-        
+
         df = pd.read_csv(pth)
-        df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
-        df = df.iloc[:,1:]
-        
+        df['Churn'] = df['Attrition_Flag'].apply(
+            lambda val: 0 if val == "Existing Customer" else 1)
+        df = df.iloc[:, 1:]
+
         self.dataframe = df
 
         del df
 
-
     def perform_eda(self):
         '''
-        performs eda on df and save figures to images folder
-        
+        performs eda based on self.dataframe stored in object and save plots into ./images/eda
+
         input:
                 self.dataframe: pandas dataframe
 
@@ -65,12 +63,30 @@ class Model():
         '''
 
         for quant_column in constants.QUANT_COLUMNS:
-            plt.figure(figsize=(20,10)) 
+            plt.figure(figsize=(20, 10))
             sns.histplot(data=self.dataframe, x=quant_column)
             plt.title(f'Histogram for {quant_column}')
-            plt.savefig(f"./images/eda/{quant_column}.png")
+            plt.savefig(f"./images/eda/histograms/{quant_column}.png")
             plt.close()
-            
+
+        for cat_column in constants.CAT_COLUMNS:
+            plt.figure(figsize=(20, 10))
+            self.dataframe[cat_column].value_counts(
+                'normalize').plot(kind='bar')
+            plt.title(f'Distribution of proportions for {cat_column}')
+            plt.savefig(f"./images/eda/{cat_column}.png")
+            plt.close()
+
+        plt.figure(figsize=(20, 10))
+        sns.heatmap(
+            self.dataframe.corr(),
+            annot=False,
+            cmap='Dark2_r',
+            linewidths=2)
+        plt.title('Lineal correlation heatmap')
+        plt.savefig('./images/eda/heatmap/heatmap.png')
+        plt.close()
+
 
 def encoder_helper(df, category_lst, response):
     '''
