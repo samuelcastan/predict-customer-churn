@@ -10,8 +10,8 @@ CSV_PATH = 'data/bank_data.csv'
 RANDOM_STATE = 42
 
 DICT_REPLACE_COL_NAMES = {
-    ' ':'',
-    '-':'_'
+    ' ': '',
+    '-': '_'
 }
 
 CAT_COLUMNS = [
@@ -39,6 +39,8 @@ QUANT_COLUMNS = [
     'Avg_Utilization_Ratio'
 ]
 
+RESPONSE = 'Churn'
+
 KEEP_COLS = ['Customer_Age',
              'Dependent_count',
              'Months_on_book',
@@ -51,7 +53,7 @@ KEEP_COLS = ['Customer_Age',
              'Total_Amt_Chng_Q4_Q1',
              'Total_Trans_Amt',
              'Total_Trans_Ct',
-             'Total_Ct_Chng_Q4_Q1', 
+             'Total_Ct_Chng_Q4_Q1',
              'Avg_Utilization_Ratio',
              'Gender_Churn',
              'Education_Level_Churn',
