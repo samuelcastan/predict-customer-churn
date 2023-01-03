@@ -7,10 +7,10 @@ Date: 23 December 2022
 
 # import libraries
 import os
-import constants
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import constants
 
 
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
@@ -18,7 +18,17 @@ os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 
 class Model():
     '''
-    Class that encompasess the whole process of reading, preprocessing, training, predicting and evaluating a classification algorithm.
+    Class that encompasess the whole process of reading, preprocessing, training, predicting and
+    evaluating a classification algorithm.
+
+    Attributes:
+        dataframe:
+        X:
+        Y:
+        X_train:
+        Y_train:
+        X_test:
+        X_test
     '''
 
     def __init__(self):
@@ -36,19 +46,46 @@ class Model():
         returns dataframe for the csv found at pth
 
         input:
-        pth: a path to the .csv
+            pth: a path to the .csv
         output:
-        self.datafame: pandas dataframe
+            self.datafame: pandas dataframe
         '''
 
         df = pd.read_csv(pth)
+
         df['Churn'] = df['Attrition_Flag'].apply(
             lambda val: 0 if val == "Existing Customer" else 1)
+
         df = df.iloc[:, 1:]
 
         self.dataframe = df
 
         del df
+
+        return self
+
+    def clean_columns(self):
+        '''
+        Helper function to remove column name whitespaces and add underscores
+
+        input:
+            none
+        output:
+            none
+        '''
+
+        column_names = list(self.dataframe.columns)
+
+        column_names = [
+            column_name.replace(
+                ' ', '').replace(
+                '-', '_') for column_name in column_names]
+
+        self.dataframe.columns = column_names
+
+        del column_names
+
+        return self
 
     def perform_eda(self, quant_columns, cat_columns):
         '''
@@ -101,7 +138,9 @@ class Model():
                 self.dataframe: pandas dataframe with new columns updated
         '''
 
-        df = self.dataframe[cat_columns].copy()
+        self.dataframe = pd.get_dummies(self.dataframe, columns=cat_columns)
+
+        return self
 
 
 def perform_feature_engineering(df, response):
@@ -185,3 +224,6 @@ if __name__ == '__main__':
 
     # Perform one-hot enconding on categorical variables
     model.encoder_helper(cat_columns=constants.CAT_COLUMNS)
+
+    # Remove whitespaces and add underscores to new columns
+    model.clean_columns()
