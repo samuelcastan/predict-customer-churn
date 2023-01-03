@@ -51,25 +51,27 @@ class Model():
 
         del df
 
-    def perform_eda(self):
+    def perform_eda(self, quant_columns, cat_columns):
         '''
         performs eda based on self.dataframe stored in object and save plots into ./images/eda
 
         input:
                 self.dataframe: pandas dataframe
+                quant_columns: list containing the quantitative variables
+                cat_columns: list containing the qualitative variables
 
         output:
                 None
         '''
 
-        for quant_column in constants.QUANT_COLUMNS:
+        for quant_column in quant_columns:
             plt.figure(figsize=(20, 10))
             sns.histplot(data=self.dataframe, x=quant_column)
             plt.title(f'Histogram for {quant_column}')
             plt.savefig(f"./images/eda/histograms/{quant_column}.png")
             plt.close()
 
-        for cat_column in constants.CAT_COLUMNS:
+        for cat_column in cat_columns:
             plt.figure(figsize=(20, 10))
             self.dataframe[cat_column].value_counts(
                 'normalize').plot(kind='bar')
@@ -88,20 +90,21 @@ class Model():
         plt.close()
 
 
-def encoder_helper(df, category_lst, response):
-    '''
-    helper function to turn each categorical column into a new column with
-    propotion of churn for each category - associated with cell 15 from the notebook
+        def encoder_helper(self, category_lst):
+            '''
+            helper function to turn each categorical column (list provided in constants.py) into a new column with
+            propotion of churn for each category - associated with cell 16 from the notebook
 
-    input:
-            df: pandas dataframe
-            category_lst: list of columns that contain categorical features
-            response: string of response name [optional argument that could be used for naming variables or index y column]
+            input:
+                    self.dataframe: pandas dataframe
+                    category_lst: list of columns that contain categorical features
 
-    output:
-            df: pandas dataframe with new columns for
-    '''
-    pass
+            output:
+                    self.dataframe: pandas dataframe with new columns updated
+            '''
+            
+            pass
+
 
 
 def perform_feature_engineering(df, response):
@@ -174,7 +177,12 @@ if __name__ == '__main__':
 
     # Create Model object
     model = Model()
+    
     # Import CSV
     model.import_data(constants.CSV_PATH)
+    
     # Perform EDA
-    model.perform_eda()
+    model.perform_eda(quant_columns=constants.QUANT_COLUMNS, cat_columns=constants.CAT_COLUMNS)
+
+    # Perform one-hot enconding on categorical variables
+    #model.encoder_helper(constants.CAT_COLUMNS)
