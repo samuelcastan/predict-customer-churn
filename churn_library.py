@@ -12,8 +12,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import constants
 
-
-os.environ['QT_QPA_PLATFORM'] = 'offscreen'
+from sklearn.preprocessing import normalize
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import normalize
 
 
 class Model():
@@ -29,17 +30,20 @@ class Model():
         Y_train:
         X_test:
         X_test
+
+    Methods:
+
     '''
 
     def __init__(self):
         self.dataframe = None
         self.X = None
-        self.Y = None
+        self.y = None
         self.X_train = None
         self.X_test = None
-        self.Y_train = None
-        self.Y_test = None
-        self.Y_pred = None
+        self.y_train = None
+        self.y_test = None
+        self.y_pred = None
 
     def import_data(self, pth):
         '''
@@ -142,18 +146,42 @@ class Model():
 
         return self
 
+    def perform_feature_engineering(self, predictors, response):
+        '''
+        Normalizes the predictor variables and creates training and testing attributes.
 
-def perform_feature_engineering(df, response):
+        input:
+            self.dataframe: pandas dataframe
+            predictors: list of colum names used to predict the response variable
+            response: string of response variable
+
+        output:
+            self.X: All attributes instances
+            self.y: All response variables instances
+            self.X_train: X training data
+            self.X_test: X testing data
+            self.y_train: y training data
+            self.y_test: y testing data
+        '''
+
+        self.X = normalize(self.dataframe[predictors])
+        self.y = self.dataframe[response]
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+            self.X, self.y, test_size=constants.TEST_SIZE, random_state=constants.RANDOM_STATE)
+
+        return self
+
+
+def train_models(X_train, X_test, y_train, y_test):
     '''
+    train, store model results: images + scores, and store models
     input:
-              df: pandas dataframe
-              response: string of response name [optional argument that could be used for naming variables or index y column]
-
+              X_train: X training data
+              X_test: X testing data
+              y_train: y training data
+              y_test: y testing data
     output:
-              self.X_train: X training data
-              self.X_test: X testing data
-              self.y_train: y training data
-              self.y_test: y testing data
+              None
     '''
     pass
 
@@ -195,20 +223,6 @@ def feature_importance_plot(model, X_data, output_pth):
     pass
 
 
-def train_models(X_train, X_test, y_train, y_test):
-    '''
-    train, store model results: images + scores, and store models
-    input:
-              X_train: X training data
-              X_test: X testing data
-              y_train: y training data
-              y_test: y testing data
-    output:
-              None
-    '''
-    pass
-
-
 if __name__ == '__main__':
 
     # Create Model object
@@ -227,3 +241,8 @@ if __name__ == '__main__':
 
     # Remove whitespaces and add underscores to new columns
     model.clean_columns()
+
+    # Perform feature engineering
+    model.perform_feature_engineering(
+        predictors=constants.PREDICTORS,
+        response=constants.RESPONSE)
