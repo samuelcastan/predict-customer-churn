@@ -5,8 +5,6 @@ Author: Samuel Castán
 Date: 23 December 2022
 '''
 
-# import libraries
-import os
 import pandas as pd
 import shap
 import joblib
@@ -46,6 +44,7 @@ class Model():
         self.X_train = None
         self.X_test = None
         self.y_train = None
+        self.y_test = None
         self.y_train_preds_lr = None
         self.y_test_preds_lr = None
         self.y_train_preds_rf = None
