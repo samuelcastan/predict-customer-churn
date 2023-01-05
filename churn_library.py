@@ -229,12 +229,12 @@ class Model():
                 self.y_train_preds_lr,
                 self.y_test_preds_lr]}
 
-        for model, results in prediction_results.items():
+        for model_name, results in prediction_results.items():
 
             # Train dataset
             plt.rc('figure', figsize=(5, 5))
             plt.text(
-                0.01, 1.25, str(f'{model} Train'), {
+                0.01, 1.25, str(f'{model_name} Train'), {
                     'fontsize': 10}, fontproperties='monospace')
             plt.text(
                 0.01, 0.05, str(
@@ -243,7 +243,7 @@ class Model():
                     'fontsize': 10}, fontproperties='monospace')
             # Test dataset
             plt.text(
-                0.01, 0.6, str(f'{model} Test'), {
+                0.01, 0.6, str(f'{model_name} Test'), {
                     'fontsize': 10}, fontproperties='monospace')
             plt.text(
                 0.01, 0.7, str(
@@ -252,7 +252,7 @@ class Model():
                     'fontsize': 10}, fontproperties='monospace')
             plt.axis('off')
             plt.savefig(
-                f'./images/results/{model}_classification_report.png',
+                f'./images/results/{model_name}_classification_report.png',
                 bbox_inches='tight')
             plt.close()
 
