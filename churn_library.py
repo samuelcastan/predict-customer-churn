@@ -12,14 +12,13 @@ import shap
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
-import constants
-
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import normalize
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import plot_roc_curve, classification_report
+import constants
 
 
 class Model():
@@ -215,8 +214,7 @@ class Model():
 
     def classification_report_image(self):
         '''
-        produces classification report and ROC curve with its AUC for training and testing results and stores report as image
-        in images folder
+        Saves classification report, ROC curve with its AUC for training and testing data.
 
     input:
             None
@@ -254,7 +252,9 @@ class Model():
                         self.y_test, results[1])), {
                     'fontsize': 10}, fontproperties='monospace')
             plt.axis('off')
-            plt.savefig(f'./images/results/{model}_classification_report.png', bbox_inches='tight')
+            plt.savefig(
+                f'./images/results/{model}_classification_report.png',
+                bbox_inches='tight')
             plt.close()
 
 
