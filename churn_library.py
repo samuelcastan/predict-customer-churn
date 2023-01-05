@@ -215,7 +215,7 @@ class Model():
 
     def classification_report_image(self):
         '''
-        produces classification report for training and testing results and stores report as image
+        produces classification report and ROC curve with its AUC for training and testing results and stores report as image
         in images folder
 
     input:
@@ -254,7 +254,7 @@ class Model():
                         self.y_test, results[1])), {
                     'fontsize': 10}, fontproperties='monospace')
             plt.axis('off')
-            plt.savefig(f'./images/results/{model}_classification_report.png')
+            plt.savefig(f'./images/results/{model}_classification_report.png', bbox_inches='tight')
             plt.close()
 
 
