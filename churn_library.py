@@ -8,13 +8,18 @@ Date: 23 December 2022
 # import libraries
 import os
 import pandas as pd
+import shap
+import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 import constants
 
-from sklearn.preprocessing import normalize
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import normalize
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import plot_roc_curve, classification_report
 
 
 class Model():
@@ -42,8 +47,10 @@ class Model():
         self.X_train = None
         self.X_test = None
         self.y_train = None
-        self.y_test = None
-        self.y_pred = None
+        self.y_train_preds_lr = None
+        self.y_test_preds_lr = None
+        self.y_train_preds_rf = None
+        self.y_test_preds_rf = None
 
     def import_data(self, pth):
         '''
@@ -131,15 +138,13 @@ class Model():
 
     def encoder_helper(self, cat_columns):
         '''
-        helper function to turn each categorical column (list provided in constants.py) into a new column with
-        propotion of churn for each category - associated with cell 16 from the notebook
+        helper function to onek-hot enconde the categorical columns
 
         input:
-                self.dataframe: pandas dataframe
-                cat_columns: list of columns that contain categorical features to apply one-hot enconding
+            cat_columns: list of categorical columns to one-hot enconde
 
         output:
-                self.dataframe: pandas dataframe with new columns updated
+            None
         '''
 
         self.dataframe = pd.get_dummies(self.dataframe, columns=cat_columns)
@@ -151,17 +156,11 @@ class Model():
         Normalizes the predictor variables and creates training and testing attributes.
 
         input:
-            self.dataframe: pandas dataframe
             predictors: list of colum names used to predict the response variable
             response: string of response variable
 
         output:
-            self.X: All attributes instances
-            self.y: All response variables instances
-            self.X_train: X training data
-            self.X_test: X testing data
-            self.y_train: y training data
-            self.y_test: y testing data
+           None
         '''
 
         self.X = normalize(self.dataframe[predictors])
@@ -171,42 +170,92 @@ class Model():
 
         return self
 
+    def train_models(self):
+        '''
+        train, store model results: images + scores, and store models
 
-def train_models(X_train, X_test, y_train, y_test):
-    '''
-    train, store model results: images + scores, and store models
+        input:
+            None
+        output:
+            None
+        '''
+
+        rfc = RandomForestClassifier(random_state=constants.RANDOM_STATE)
+        cv_rfc = GridSearchCV(
+            estimator=rfc,
+            param_grid=constants.RANDOM_FORREST_GRID,
+            cv=5)
+
+        lrc = LogisticRegression(
+            solver=constants.LOGISTIC_SOLVER,
+            max_iter=constants.LOGISTIC_ITER)
+
+        # Train models
+        cv_rfc.fit(self.X_train, self.y_train)
+        lrc.fit(self.X_train, self.y_train)
+
+        # Make predicitinos
+        self.y_train_preds_rf = cv_rfc.best_estimator_.predict(self.X_train)
+        self.y_test_preds_rf = cv_rfc.best_estimator_.predict(self.X_test)
+
+        self.y_train_preds_lr = lrc.predict(self.X_train)
+        self.y_test_preds_lr = lrc.predict(self.X_test)
+
+        # Store results
+        self.classification_report_image()
+
+        # Store models with best estimators
+        joblib.dump(cv_rfc.best_estimator_, './models/rfc_model.pkl')
+        joblib.dump(lrc, './models/logistic_model.pkl')
+
+        # Get and store results
+        self.classification_report_image()
+
+        return self
+
+    def classification_report_image(self):
+        '''
+        produces classification report for training and testing results and stores report as image
+        in images folder
+
     input:
-              X_train: X training data
-              X_test: X testing data
-              y_train: y training data
-              y_test: y testing data
-    output:
-              None
-    '''
-    pass
+            None
+        output:
+            None
+        '''
 
+        prediction_results = {
+            'Random Forest': [
+                self.y_train_preds_rf,
+                self.y_test_preds_rf],
+            'Logistic Regression': [
+                self.y_train_preds_lr,
+                self.y_test_preds_lr]}
 
-def classification_report_image(y_train,
-                                y_test,
-                                y_train_preds_lr,
-                                y_train_preds_rf,
-                                y_test_preds_lr,
-                                y_test_preds_rf):
-    '''
-    produces classification report for training and testing results and stores report as image
-    in images folder
-    input:
-            y_train: training response values
-            y_test:  test response values
-            y_train_preds_lr: training predictions from logistic regression
-            y_train_preds_rf: training predictions from random forest
-            y_test_preds_lr: test predictions from logistic regression
-            y_test_preds_rf: test predictions from random forest
+        for model, results in prediction_results.items():
 
-    output:
-             None
-    '''
-    pass
+            # Train dataset
+            plt.rc('figure', figsize=(5, 5))
+            plt.text(
+                0.01, 1.25, str(f'{model} Train'), {
+                    'fontsize': 10}, fontproperties='monospace')
+            plt.text(
+                0.01, 0.05, str(
+                    classification_report(
+                        self.y_train, results[0])), {
+                    'fontsize': 10}, fontproperties='monospace')
+            # Test dataset
+            plt.text(
+                0.01, 0.6, str(f'{model} Test'), {
+                    'fontsize': 10}, fontproperties='monospace')
+            plt.text(
+                0.01, 0.7, str(
+                    classification_report(
+                        self.y_test, results[1])), {
+                    'fontsize': 10}, fontproperties='monospace')
+            plt.axis('off')
+            plt.savefig(f'./images/results/{model}_classification_report.png')
+            plt.close()
 
 
 def feature_importance_plot(model, X_data, output_pth):
@@ -246,3 +295,6 @@ if __name__ == '__main__':
     model.perform_feature_engineering(
         predictors=constants.PREDICTORS,
         response=constants.RESPONSE)
+
+    # Train, predict, store results and save models
+    model.train_models()
