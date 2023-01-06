@@ -5,8 +5,8 @@ Author: Samuel Castán
 Date: January 5th 2023
 '''
 
+import warnings
 import pandas as pd
-import numpy as np
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -17,9 +17,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import plot_roc_curve, classification_report
 import constants
-import warnings
 
 warnings.filterwarnings('ignore')
+
 
 class Model():
     '''
@@ -62,16 +62,16 @@ class Model():
             self.datafame: pandas dataframe
         '''
 
-        df = pd.read_csv(pth)
+        dataset = pd.read_csv(pth)
 
-        df['Churn'] = df['Attrition_Flag'].apply(
+        dataset['Churn'] = dataset['Attrition_Flag'].apply(
             lambda val: 0 if val == "Existing Customer" else 1)
 
-        df = df.iloc[:, 1:]
+        dataset = dataset.iloc[:, 1:]
 
-        self.dataframe = df
+        self.dataframe = dataset
 
-        del df
+        del dataset
 
         return self
 
@@ -262,10 +262,9 @@ class Model():
             plt.close()
 
         # Store ROC curve with its corresponding AUC score
-        fig, ax = plt.subplots(figsize=(15, 8))
-
-        plot_roc_curve(lr_model, self.X_test, self.y_test, ax=ax)
-        plot_roc_curve(rf_model, self.X_test, self.y_test, ax=ax)
+        plt.figure(figsize=(15, 8))
+        plot_roc_curve(lr_model, self.X_test, self.y_test)
+        plot_roc_curve(rf_model, self.X_test, self.y_test)
         plt.savefig('./images/results/roc_auc_report.png', bbox_inches='tight')
         plt.close()
 
@@ -279,20 +278,22 @@ class Model():
             None
         '''
 
-        importances = pd.Series(dict(zip(
-            list(constants.PREDICTORS), list(rf_model.feature_importances_)))).sort_values(ascending=False)
+        importances = pd.Series(dict(zip(list(constants.PREDICTORS), list(
+            rf_model.feature_importances_)))).sort_values(ascending=False)
 
         sns.barplot(
             x=importances.index[:20],
             y=importances.values[:20],
             color='blue')
-        
+
         plt.title('Top 15 feature importances')
-        
+
         plt.xticks(rotation=90)
 
-        plt.savefig('./images/results/feature_importance.png', bbox_inches='tight')
-        
+        plt.savefig(
+            './images/results/feature_importance.png',
+            bbox_inches='tight')
+
         plt.close()
 
 
