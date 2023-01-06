@@ -1,12 +1,12 @@
 '''
-
+Model Class
 
 Author: Samuel Castán
-Date: 23 December 2022
+Date: January 5th 2023
 '''
 
 import pandas as pd
-import shap
+import numpy as np
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -17,7 +17,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import plot_roc_curve, classification_report
 import constants
+import warnings
 
+warnings.filterwarnings('ignore')
 
 class Model():
     '''
@@ -199,24 +201,26 @@ class Model():
         self.y_train_preds_lr = lrc.predict(self.X_train)
         self.y_test_preds_lr = lrc.predict(self.X_test)
 
-        # Store results
-        self.classification_report_image()
+        # Save results
+        self.classification_report_image(
+            lr_model=lrc, rf_model=cv_rfc.best_estimator_)
+
+        # Save feature importances
+        self.feature_importance_plot(rf_model=cv_rfc.best_estimator_)
 
         # Store models with best estimators
         joblib.dump(cv_rfc.best_estimator_, './models/rfc_model.pkl')
         joblib.dump(lrc, './models/logistic_model.pkl')
 
-        # Get and store results
-        self.classification_report_image()
-
         return self
 
-    def classification_report_image(self):
+    def classification_report_image(self, lr_model, rf_model):
         '''
         Saves classification report, ROC curve with its AUC for training and testing data.
 
-    input:
-            None
+        input:
+            lr_model: trained logistic regression model
+            rf_model: trained random forest classification model (best estimators)
         output:
             None
         '''
@@ -229,6 +233,7 @@ class Model():
                 self.y_train_preds_lr,
                 self.y_test_preds_lr]}
 
+        # Store classification report for both models
         for model_name, results in prediction_results.items():
 
             # Train dataset
@@ -256,19 +261,39 @@ class Model():
                 bbox_inches='tight')
             plt.close()
 
+        # Store ROC curve with its corresponding AUC score
+        fig, ax = plt.subplots(figsize=(15, 8))
 
-def feature_importance_plot(model, X_data, output_pth):
-    '''
-    creates and stores the feature importances in pth
-    input:
-            model: model object containing feature_importances_
-            X_data: pandas dataframe of X values
-            output_pth: path to store the figure
+        plot_roc_curve(lr_model, self.X_test, self.y_test, ax=ax)
+        plot_roc_curve(rf_model, self.X_test, self.y_test, ax=ax)
+        plt.savefig('./images/results/roc_auc_report.png', bbox_inches='tight')
+        plt.close()
 
-    output:
-             None
-    '''
-    pass
+    def feature_importance_plot(self, rf_model):
+        '''
+        creates and stores the feature importances for logistic regression and random forest
+
+        input:
+            rf_model: trained random forest classification model (best estimators)
+        output:
+            None
+        '''
+
+        importances = pd.Series(dict(zip(
+            list(constants.PREDICTORS), list(rf_model.feature_importances_)))).sort_values(ascending=False)
+
+        sns.barplot(
+            x=importances.index[:20],
+            y=importances.values[:20],
+            color='blue')
+        
+        plt.title('Top 15 feature importances')
+        
+        plt.xticks(rotation=90)
+
+        plt.savefig('./images/results/feature_importance.png', bbox_inches='tight')
+        
+        plt.close()
 
 
 if __name__ == '__main__':
