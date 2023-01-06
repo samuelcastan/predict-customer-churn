@@ -1,5 +1,5 @@
 '''
-Constants used in churn_library.py
+Constants used in churn_library.py and churn_script_logging_and_tests.py
 
 Author: Samuel Castan
 Date: 2022/12/24
