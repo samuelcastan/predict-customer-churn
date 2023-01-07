@@ -1,8 +1,9 @@
 '''
-Model Class
+Module that executes the process to read, process, train and evaluate and store two
+ML algorithms to determine if a bank customer will churn.
 
 Author: Samuel Castán
-Date: January 5th 2023
+Date: January 6, 2023
 '''
 
 import warnings
@@ -163,7 +164,10 @@ class Model():
            None
         '''
 
-        self.X = normalize(self.dataframe[predictors])
+        self.X = pd.DataFrame(
+            normalize(
+                self.dataframe[predictors]),
+            columns=constants.PREDICTORS)
         self.y = self.dataframe[response]
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
             self.X, self.y, test_size=constants.TEST_SIZE, random_state=constants.RANDOM_STATE)
@@ -278,8 +282,10 @@ class Model():
             None
         '''
 
-        importances = pd.Series(dict(zip(list(constants.PREDICTORS), list(
-            rf_model.feature_importances_)))).sort_values(ascending=False)
+        importances = pd.Series(dict(
+            zip(self.X.columns, rf_model.feature_importances_))).sort_values(ascending=False)
+
+        plt.figure(figsize=(20, 8))
 
         sns.barplot(
             x=importances.index[:20],
