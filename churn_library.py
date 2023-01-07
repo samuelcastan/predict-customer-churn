@@ -303,6 +303,8 @@ class Model():
             bbox_inches='tight')
         plt.close()
 
+        return self
+
 
 if __name__ == '__main__':
 
