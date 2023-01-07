@@ -27,17 +27,19 @@ class Model():
     Class that encompasess the whole process of reading, preprocessing, training, predicting and
     evaluating a classification algorithm.
 
-    Attributes:
-        dataframe:
-        X:
-        Y:
-        X_train:
-        Y_train:
-        X_test:
-        X_test
-
-    Methods:
-
+    Attributes
+    ----------
+        dataframe: original data read from the .csv file
+        X: stores predictor variables data ready to split for training and testing
+        Y: stores response variable data ready to split for training and testing
+        X_train: predictor variables data to train ML models
+        X_test: predictor variables data to test ML models
+        Y_train: response variable data to train ML models
+        Y_test: response variable data to test ML model
+        y_train_preds_lr: predictions over trained data for logistic regression model
+        y_train_preds_rf: predictions over trained data for random forest model
+        y_test_preds_lr: predictions over test data for logistic regression model
+        y_test_preds_rf: predictions over test data for random forest model
     '''
 
     def __init__(self):
@@ -299,7 +301,6 @@ class Model():
         plt.savefig(
             './images/results/feature_importance.png',
             bbox_inches='tight')
-
         plt.close()
 
 
