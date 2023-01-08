@@ -78,29 +78,6 @@ class Model():
 
         return self
 
-    def clean_columns(self):
-        '''
-        Helper function to remove column name whitespaces and add underscores
-
-        input:
-            none
-        output:
-            none
-        '''
-
-        column_names = list(self.dataframe.columns)
-
-        column_names = [
-            column_name.replace(
-                ' ', '').replace(
-                '-', '_') for column_name in column_names]
-
-        self.dataframe.columns = column_names
-
-        del column_names
-
-        return self
-
     def perform_eda(self, quant_columns, cat_columns):
         '''
         performs eda based on self.dataframe stored in object and save plots into ./images/eda
@@ -151,6 +128,29 @@ class Model():
         '''
 
         self.dataframe = pd.get_dummies(self.dataframe, columns=cat_columns)
+
+        return self
+
+    def clean_columns(self):
+        '''
+        Helper function to remove column name whitespaces and add underscores
+
+        input:
+            none
+        output:
+            none
+        '''
+
+        column_names = list(self.dataframe.columns)
+
+        column_names = [
+            column_name.replace(
+                ' ', '').replace(
+                '-', '_') for column_name in column_names]
+
+        self.dataframe.columns = column_names
+
+        del column_names
 
         return self
 
