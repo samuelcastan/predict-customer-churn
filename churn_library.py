@@ -95,7 +95,9 @@ class Model():
             plt.figure(figsize=(20, 10))
             sns.histplot(data=self.dataframe, x=quant_column)
             plt.title(f'Histogram for {quant_column}')
-            plt.savefig(f"./images/eda/histograms/{quant_column}.png")
+            plt.savefig(
+                f"./images/eda/histograms/{quant_column}.png",
+                bbox_inches='tight')
             plt.close()
 
         for cat_column in cat_columns:
@@ -103,7 +105,9 @@ class Model():
             self.dataframe[cat_column].value_counts(
                 'normalize').plot(kind='bar')
             plt.title(f'Distribution of proportions for {cat_column}')
-            plt.savefig(f"./images/eda/barplots/{cat_column}.png")
+            plt.savefig(
+                f"./images/eda/barplots/{cat_column}.png",
+                bbox_inches='tight')
             plt.close()
 
         plt.figure(figsize=(20, 10))
@@ -141,29 +145,6 @@ class Model():
         del column_names
 
         return self
-
-    # def clean_columns(self):
-    #     '''
-    #     Helper function to remove column name whitespaces and add underscores
-
-    #     input:
-    #         none
-    #     output:
-    #         none
-    #     '''
-
-    #     column_names = list(self.dataframe.columns)
-
-    #     column_names = [
-    #         column_name.replace(
-    #             ' ', '').replace(
-    #             '-', '_') for column_name in column_names]
-
-    #     self.dataframe.columns = column_names
-
-    #     del column_names
-
-    #     return self
 
     def perform_feature_engineering(self, predictors, response):
         '''
