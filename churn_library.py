@@ -129,18 +129,6 @@ class Model():
 
         self.dataframe = pd.get_dummies(self.dataframe, columns=cat_columns)
 
-        return self
-
-    def clean_columns(self):
-        '''
-        Helper function to remove column name whitespaces and add underscores
-
-        input:
-            none
-        output:
-            none
-        '''
-
         column_names = list(self.dataframe.columns)
 
         column_names = [
@@ -153,6 +141,29 @@ class Model():
         del column_names
 
         return self
+
+    # def clean_columns(self):
+    #     '''
+    #     Helper function to remove column name whitespaces and add underscores
+
+    #     input:
+    #         none
+    #     output:
+    #         none
+    #     '''
+
+    #     column_names = list(self.dataframe.columns)
+
+    #     column_names = [
+    #         column_name.replace(
+    #             ' ', '').replace(
+    #             '-', '_') for column_name in column_names]
+
+    #     self.dataframe.columns = column_names
+
+    #     del column_names
+
+    #     return self
 
     def perform_feature_engineering(self, predictors, response):
         '''
@@ -271,7 +282,7 @@ class Model():
         plt.figure(figsize=(15, 8))
         plot_roc_curve(lr_model, self.X_test, self.y_test)
         plot_roc_curve(rf_model, self.X_test, self.y_test)
-        plt.savefig('./images/results/roc_auc_report.png', bbox_inches='tight')
+        plt.savefig('./images/results/roc_auc.png', bbox_inches='tight')
         plt.close()
 
     def feature_importance_plot(self, rf_model):
@@ -290,11 +301,11 @@ class Model():
         plt.figure(figsize=(20, 8))
 
         sns.barplot(
-            x=importances.index[:20],
-            y=importances.values[:20],
+            x=importances.index[:constants.AMOUNT_TOP_FEATURES],
+            y=importances.values[:constants.AMOUNT_TOP_FEATURES],
             color='blue')
 
-        plt.title('Top 15 feature importances')
+        plt.title(f'Top {constants.AMOUNT_TOP_FEATURES} feature importances')
 
         plt.xticks(rotation=90)
 
@@ -321,9 +332,6 @@ if __name__ == '__main__':
 
     # Perform one-hot enconding on categorical variables
     model.encoder_helper(cat_columns=constants.CAT_COLUMNS)
-
-    # Remove whitespaces and add underscores to new columns
-    model.clean_columns()
 
     # Perform feature engineering
     model.perform_feature_engineering(

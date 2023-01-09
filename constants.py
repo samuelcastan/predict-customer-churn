@@ -87,6 +87,8 @@ LOGISTIC_ITER = 3000
 
 CROSS_VALIDATION = 5
 
+AMOUNT_TOP_FEATURES=15
+
 RANDOM_FORREST_GRID = {
     'n_estimators': [200, 500],
     'max_features': ['auto', 'sqrt'],
