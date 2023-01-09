@@ -84,3 +84,7 @@ ipython churn_library.py
 ```python
 ipython churn_script_logging_and_tests.py
 ```
+
+
+## Special thanks to:
+- mohrosidi: https://github.com/mohrosidi/udacity_customer_churn. I look into his solution on HOW to turn function into a class. Starting from there I could take on with the project but with my own approach.
