@@ -262,7 +262,8 @@ class Model():
         # Store ROC curve with its corresponding AUC score
         plt.figure(figsize=(15, 8))
         plot_roc_curve(lr_model, self.X_test, self.y_test)
-        plot_roc_curve(rf_model, self.X_test, self.y_test)
+        ax = plt.gca()
+        plot_roc_curve(rf_model, self.X_test, self.y_test, ax=ax, alpha=0.8)
         plt.savefig('./images/results/roc_auc.png', bbox_inches='tight')
         plt.close()
 
